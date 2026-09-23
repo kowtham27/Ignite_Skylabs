@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+@custom-variant dark {
+  &:where([data-theme=dark] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme=light]) *) {
+      @slot;
+    }
+  }
+}
+
+/* Semantic color tokens. Light is the default; dark follows the OS. */
+:root {
+  color-scheme: light;
+  --bg: #f6f4ee;
+  --surface: #fffdf8;
+  --surface-2: #efece3;
+  --border: #e2ded2;
+  --ink: #1c1b18;
+  --ink-2: #57544c;
+  --muted: #8a867b;
+  --accent: #1c1b18;
+  --accent-ink: #fffdf8;
+  --marker: #ffd86b;
+  --pop: #eb6834;
+  /* chart tokens (validated reference palette) */
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+}
+/* Dark follows the OS unless the user picked a theme (data-theme on <html>) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #11110f;
+    --surface: #1a1a18;
+    --surface-2: #242421;
+    --border: #2f2e2a;
+    --ink: #f4f2ea;
+    --ink-2: #c3c0b4;
+    --muted: #8a867b;
+    --accent: #f4f2ea;
+    --accent-ink: #1a1a18;
+    --marker: #7a5d0c;
+    --pop: #f07a4a;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #11110f;
+  --surface: #1a1a18;
+  --surface-2: #242421;
+  --border: #2f2e2a;
+  --ink: #f4f2ea;
+  --ink-2: #c3c0b4;
+  --muted: #8a867b;
+  --accent: #f4f2ea;
+  --accent-ink: #1a1a18;
+  --marker: #7a5d0c;
+  --pop: #f07a4a;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-marker: var(--marker);
+  --color-pop: var(--pop);
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+@utility input {
+  @apply w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted outline-none transition focus:border-ink-2 focus:ring-2 focus:ring-marker;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-accent text-accent-ink hover:opacity-90;
+}
+@utility btn-ghost {
+  @apply btn border border-line bg-surface text-ink hover:bg-surface-2;
+}
+@utility card {
+  @apply rounded-xl border border-line bg-surface;
+}
+@utility label {
+  @apply mb-1.5 block text-sm font-medium text-ink;
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Marker-pen highlight, slightly uneven like a real highlighter stroke */
+.marker {
+  background: linear-gradient(104deg, transparent 0.9%, var(--marker) 2.4%, var(--marker) 5.8%, var(--marker) 93%, transparent 97%);
+  border-radius: 0.8em 0.3em 0.9em 0.25em;
+  padding: 0 0.2em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+kbd {
+  font-family: ui-monospace, monospace;
+  font-size: 0.72rem;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 0 0.3rem;
+  background: var(--surface);
+  color: var(--ink-2);
+}
