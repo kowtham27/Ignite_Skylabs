@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+/*
+ * Ridemap tokens — taken from ridemap.in's production CSS
+ * (:root { --brand-dark; --brand-light; --accent-primary; --accent-secondary }).
+ */
+:root {
+  --rm-lime: #a7e92f; /* --accent-primary */
+  --rm-lime-hover: #96d02a; /* site's hover:bg-[#96d02a] */
+  --rm-lime-glow: rgba(167, 233, 47, 0.25);
+  --rm-green: #32c766; /* --accent-secondary, used in site gradients */
+  --rm-bg: #151a23; /* --brand-dark, site body background */
+  --rm-bg-raised: #1f242c; /* --brand-light */
+  --rm-surface: rgba(31, 36, 44, 0.72);
+  --rm-border: rgba(255, 255, 255, 0.1);
+  --rm-text: #ffffff;
+  --rm-muted: #9a9da3; /* site uses #8b8d91; lifted slightly for AA on the glass card */
+  --rm-error: #ff5d5d;
+  --wa-green: #25d366;
+}
+
+@theme inline {
+  --color-rm-lime: var(--rm-lime);
+  --color-rm-lime-hover: var(--rm-lime-hover);
+  --color-rm-green: var(--rm-green);
+  --color-rm-bg: var(--rm-bg);
+  --color-rm-raised: var(--rm-bg-raised);
+  --color-rm-surface: var(--rm-surface);
+  --color-rm-border: var(--rm-border);
+  --color-rm-text: var(--rm-text);
+  --color-rm-muted: var(--rm-muted);
+  --color-rm-error: var(--rm-error);
+  --color-wa-green: var(--wa-green);
+  --radius-card: 16px;
+  --radius-control: 12px;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--rm-bg);
+  color: var(--rm-text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--rm-lime);
+  outline-offset: 2px;
+}
+
+/* ---------- Route illustration ---------- */
+@keyframes rm-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+.rm-route-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: rm-draw 1.8s ease-out 0.2s forwards;
+}
+
+/* ---------- Brand flourishes ---------- */
+@keyframes rm-shimmer {
+  to { background-position: 200% center; }
+}
+.rm-shimmer {
+  background-size: 200% auto;
+  animation: rm-shimmer 6s linear infinite;
+}
+
+/* `backwards` fill releases `transform` after the entrance so hover translate/scale still work */
+@keyframes rm-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.rm-rise {
+  animation: rm-rise 0.5s ease-out backwards;
+}
+
+/* Light sweep across enabled CTAs on hover */
+.rm-shine {
+  position: relative;
+  overflow: hidden;
+}
+.rm-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.rm-shine:not(:disabled):hover::after {
+  transform: translateX(120%);
+  transition: transform 0.7s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rm-route-draw { animation: none; stroke-dashoffset: 0; }
+  .rm-shimmer, .rm-rise { animation: none; }
+  .rm-shine::after { display: none; }
+}
