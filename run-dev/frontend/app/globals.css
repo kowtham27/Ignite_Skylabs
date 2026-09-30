@@ -1,0 +1,303 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Tokens. Values checked against WCAG AA (see README → Colour):
+ *  - amber stays for fills and highlights; `amber-ink` is the text-safe amber
+ *    (light #B8741F measured 3.29:1 on paper, so text uses #8A5413 at 5.45:1).
+ *  - 1px `rule` lines are decorative. Form controls use `field` (≥ 3:1 non-text).
+ */
+:root {
+  --paper: #f3efe6;
+  --surface: #fbf9f4;
+  --ink: #1c1b19;
+  --muted: #6b675e;
+  --rule: #d9d3c5;
+  --field: #8c8677;
+  --signal: #2e6b4f;
+  --on-signal: #fbf9f4;
+  --amber: #b8741f;
+  --amber-ink: #8a5413;
+  --amber-tint: #efe1ce;
+  --brick: #a8412c;
+  --brick-tint: #f3e7e0;
+  /* Keycap lips: the solid edge a button sits on. */
+  --signal-deep: #1d4a35;
+  --lip: #cfc8b8;
+  --grain: 0.05;
+  color-scheme: light;
+}
+
+.dark {
+  --paper: #141412;
+  --surface: #1d1c19;
+  --ink: #ece7dc;
+  --muted: #9a958a;
+  --rule: #2e2c28;
+  --field: #75706a;
+  --signal: #7fbf9a;
+  --on-signal: #141412;
+  --amber: #e0a45a;
+  --amber-ink: #e0a45a;
+  --amber-tint: #443726;
+  --brick: #e07a62;
+  --brick-tint: #3a2520;
+  --signal-deep: #4f8a69;
+  --lip: #0c0c0b;
+  --grain: 0.07;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-field: var(--field);
+  --color-signal: var(--signal);
+  --color-on-signal: var(--on-signal);
+  --color-amber: var(--amber);
+  --color-amber-ink: var(--amber-ink);
+  --color-amber-tint: var(--amber-tint);
+  --color-brick: var(--brick);
+  --color-brick-tint: var(--brick-tint);
+  --color-signal-deep: var(--signal-deep);
+  --color-lip: var(--lip);
+
+  --font-display: var(--font-instrument), Georgia, serif;
+  --font-sans: var(--font-plex), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  /* One radius scale, used everywhere. */
+  --radius-ui: 6px;
+  --radius-tag: 2px;
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@layer base {
+  html {
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    background: var(--paper);
+  }
+  ::selection {
+    background: var(--amber-tint);
+    color: var(--ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--signal);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  /* Timers, counters, versions: digits that don't dance. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .transition-quick {
+    transition-duration: 180ms;
+    transition-timing-function: var(--ease-out);
+  }
+}
+
+/* ───────────────────────────── motion ─────────────────────────────
+ * Rules: every movement imitates something physical (paper, a pen, a key),
+ * plays once, and finishes quickly. Only the logo cursor loops. Everything
+ * here collapses to its end state under prefers-reduced-motion (bottom).
+ */
+
+/* Page arrival: title first, then the form, then the rest. Delays are
+   deliberately uneven, so it reads as settling rather than a metronome. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.stagger > * {
+  animation: rise 440ms var(--ease-out) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 70ms; }
+.stagger > *:nth-child(3) { animation-delay: 115ms; }
+.stagger > *:nth-child(4) { animation-delay: 170ms; }
+.stagger > *:nth-child(5) { animation-delay: 210ms; }
+.stagger > *:nth-child(6) { animation-delay: 260ms; }
+.stagger > *:nth-child(n + 7) { animation-delay: 290ms; }
+
+/* The form steps aside after a successful sign-in, before the board opens. */
+@keyframes leave {
+  to {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+.leaving {
+  animation: leave 220ms var(--ease-out) forwards;
+}
+
+/* Hand-drawn underline under the italic word of a title. A wobbly pen line,
+   revealed left to right once, like it's being drawn. Masked, so the ink
+   colour follows the theme. */
+.hand-em {
+  isolation: isolate;
+}
+.hand-em em {
+  position: relative;
+  white-space: nowrap;
+}
+.hand-em em::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -3%;
+  right: -4%;
+  bottom: -0.02em;
+  height: 0.3em;
+  background: var(--amber);
+  opacity: 0.85;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14' preserveAspectRatio='none'%3E%3Cpath d='M2 9.6c9-2.8 17-4.4 27-3.1 8.4 1.1 13.6 3.6 22.8 3 11.7-.8 19.9-5.3 32.6-5.4 12.3-.1 20.7 3.4 33.6 1.2' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E")
+    no-repeat center / 100% 100%;
+  clip-path: inset(0 100% 0 0);
+  animation: pen 620ms cubic-bezier(0.55, 0.1, 0.3, 1) 420ms forwards;
+}
+@keyframes pen {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Wrong answer: the field shakes once, like a password box refusing. */
+@keyframes shake {
+  15% { transform: translateX(-4px); }
+  35% { transform: translateX(4px); }
+  55% { transform: translateX(-3px); }
+  75% { transform: translateX(2px); }
+  90% { transform: translateX(-1px); }
+}
+.shake {
+  animation: shake 340ms ease-out;
+}
+
+/* Keycap press: the button sits on a solid lip and travels onto it. */
+.keycap {
+  transform: translateY(0);
+  transition:
+    transform 90ms ease-out,
+    box-shadow 90ms ease-out,
+    background-color 180ms var(--ease-out),
+    border-color 180ms var(--ease-out),
+    color 180ms var(--ease-out);
+}
+.keycap:not(:disabled):active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 0 transparent !important;
+}
+
+/* Changed words after a live update: a highlighter stroke that dries off
+   over ~6 s. Under reduced motion it simply stays, then is removed by JS. */
+mark.fresh {
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 0.08em;
+  margin: 0 -0.08em;
+  background: var(--amber-tint);
+  animation: fresh-fade 6s ease-in 0.4s forwards;
+}
+@keyframes fresh-fade {
+  to {
+    background: transparent;
+  }
+}
+
+/* A card that has just changed: one soft settle, like a sheet re-pinned. */
+@keyframes repin {
+  0% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(1px);
+  }
+}
+.repin {
+  animation: repin 420ms var(--ease-out);
+}
+
+/* Scroll cue: nudges twice to say "there's more", then keeps still. */
+@keyframes nudge {
+  0%, 100% { transform: translateY(0); }
+  45% { transform: translateY(5px); }
+}
+.nudge {
+  animation: nudge 720ms ease-in-out 1s 2;
+}
+
+/* New log lines settle in once. */
+@keyframes log-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+}
+.log-line {
+  animation: log-in 200ms var(--ease-out);
+}
+
+/* Paper grain for the panel: a little tooth, so it reads as a sheet rather
+   than a flat fill. Static; nothing moves. */
+.paper-grain {
+  position: relative;
+}
+.paper-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.dark .paper-grain::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* The only thing in the app that loops. */
+@keyframes cursor-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+.cursor-blink {
+  animation: cursor-blink 1.1s steps(1, end) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .cursor-blink,
+  .nudge,
+  mark.fresh {
+    animation: none;
+  }
+}

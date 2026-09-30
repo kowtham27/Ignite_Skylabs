@@ -1,0 +1,15 @@
+{
+  "name": "run-dev",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shortcuts. The app lives in frontend/, the Appwrite setup in backend/.",
+  "scripts": {
+    "install:all": "npm --prefix frontend install && npm --prefix backend install",
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "setup": "npm --prefix backend run setup",
+    "setup:google": "npm --prefix backend run setup:google",
+    "typecheck": "npm --prefix frontend run typecheck && npm --prefix backend run typecheck"
+  }
+}
